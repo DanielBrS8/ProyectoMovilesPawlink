@@ -1,0 +1,168 @@
+{
+  "mascotas": [
+    {
+      "id": 1,
+      "nombre": "Luna",
+      "especie": "Perro",
+      "raza": "Golden Retriever",
+      "edad": "3 años",
+      "peso": "28 kg",
+      "sexo": "Hembra",
+      "foto": "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400",
+      "estado": "Necesita atención",
+      "proximaVacuna": "06/01/2026",
+      "notas": "Le encanta jugar con pelotas"
+    },
+    {
+      "id": 2,
+      "nombre": "Michi",
+      "especie": "Gato",
+      "raza": "Europeo",
+      "edad": "2 años",
+      "peso": "4.5 kg",
+      "sexo": "Macho",
+      "foto": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400",
+      "estado": "Saludable",
+      "proximaVacuna": "06/01/2026",
+      "notas": "Muy cariñoso"
+    },
+    {
+      "id": 3,
+      "nombre": "Rocky",
+      "especie": "Perro",
+      "raza": "Bulldog Francés",
+      "edad": "5 años",
+      "peso": "12 kg",
+      "sexo": "Macho",
+      "foto": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400",
+      "estado": "Saludable",
+      "proximaVacuna": "20/03/2026",
+      "notas": "Ronca mucho cuando duerme"
+    },
+    {
+      "id": 4,
+      "nombre": "Nala",
+      "especie": "Perro",
+      "raza": "Labrador",
+      "edad": "1 año",
+      "peso": "25 kg",
+      "sexo": "Hembra",
+      "foto": "https://images.unsplash.com/photo-1579213838058-8d0e2e080e09?w=400",
+      "estado": "Saludable",
+      "proximaVacuna": "10/04/2026",
+      "notas": "Muy juguetona y activa"
+    }
+  ],
+  "paseos": [
+    {
+      "id": 1,
+      "mascotaId": 1,
+      "fecha": "28/12/2025",
+      "duracion": "00:45:32",
+      "distancia": 2.3,
+      "ruta": [
+        {
+          "latitude": 37.1773,
+          "longitude": -3.5986
+        },
+        {
+          "latitude": 37.178,
+          "longitude": -3.599
+        },
+        {
+          "latitude": 37.1785,
+          "longitude": -3.5975
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "mascotaId": 3,
+      "fecha": "27/12/2025",
+      "duracion": "00:30:15",
+      "distancia": 1.5,
+      "ruta": [
+        {
+          "latitude": 37.1773,
+          "longitude": -3.5986
+        },
+        {
+          "latitude": 37.1768,
+          "longitude": -3.5995
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "mascotaId": 2,
+      "fecha": "06/01/2026",
+      "duracion": "00:00:02",
+      "distancia": 0,
+      "ruta": [
+        {
+          "latitude": 37.4219983,
+          "longitude": -122.084
+        },
+        {
+          "latitude": 37.4219983,
+          "longitude": -122.084
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "mascotaId": 3,
+      "fecha": "06/01/2026",
+      "duracion": "00:00:04",
+      "distancia": 0,
+      "ruta": [
+        {
+          "latitude": 37.4219983,
+          "longitude": -122.084
+        },
+        {
+          "latitude": 37.4219983,
+          "longitude": -122.084
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "mascotaId": 1,
+      "fecha": "06/01/2026",
+      "duracion": "00:00:28",
+      "distancia": 0.01,
+      "ruta": [
+        {
+          "latitude": 37.2038432,
+          "longitude": -3.6152068
+        },
+        {
+          "latitude": 37.2038436,
+          "longitude": -3.6152035
+        },
+        {
+          "latitude": 37.2038151,
+          "longitude": -3.6151569
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "mascotaId": 2,
+      "fecha": "06/01/2026",
+      "duracion": "00:00:08",
+      "distancia": 0,
+      "ruta": [
+        {
+          "latitude": 37.2038315,
+          "longitude": -3.6152387
+        },
+        {
+          "latitude": 37.2038303,
+          "longitude": -3.6152323
+        }
+      ]
+    }
+  ]
+}
