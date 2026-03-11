@@ -32,7 +32,7 @@ export const estilosGlobales = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // Tarjeta (card)
+  // Tarjeta
   tarjeta: {
     backgroundColor: colores.tarjeta,
     borderRadius: 20,

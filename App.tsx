@@ -88,7 +88,7 @@ export default function App() {
         cargarMascotas();
         setPantallaActual('home');
         setMascotaSeleccionada(null);
-        Alert.alert('✅ Éxito', 'Mascota guardada correctamente');
+        Alert.alert('Éxito', 'Mascota guardada correctamente');
     }
 
     function handlePaseo() {
@@ -101,7 +101,7 @@ export default function App() {
                 .then(() => {
                     cargarMascotas();
                     handleVolver();
-                    Alert.alert('✅ Éxito', 'Mascota eliminada correctamente');
+                    Alert.alert('Éxito', 'Mascota eliminada correctamente');
                 })
                 .catch((error) => console.log('Error al borrar:', error.message));
         }

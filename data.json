@@ -1,4 +1,25 @@
 {
+  "usuarios": [
+    {
+      "id": 1,
+      "nombre": "Carlos García",
+      "email": "carlos@pawlink.com",
+      "password": "123456",
+      "foto": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200",
+      "telefono": "612345678",
+      "direccion": "Calle Gran Vía 15, Granada"
+    },
+    {
+      "id": 2,
+      "nombre": "María López",
+      "email": "maria@pawlink.com",
+      "password": "123456",
+      "foto": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200",
+      "telefono": "698765432",
+      "direccion": "Avenida de la Constitución 8, Granada"
+    }
+  ],
+  "adopciones": [],
   "mascotas": [
     {
       "id": 1,

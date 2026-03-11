@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import dayjs from "dayjs";
 import {
   StyleSheet,
   View,
@@ -52,10 +53,7 @@ export default function PantallaFormulario({
 
   // Actualizar proximaVacuna cuando cambia fechaSeleccionada
   useEffect(() => {
-    const dia = fechaSeleccionada.getDate().toString().padStart(2, "0");
-    const mes = (fechaSeleccionada.getMonth() + 1).toString().padStart(2, "0");
-    const anio = fechaSeleccionada.getFullYear();
-    setProximaVacuna(`${dia}/${mes}/${anio}`);
+    setProximaVacuna(dayjs(fechaSeleccionada).format("DD/MM/YYYY"));
   }, [fechaSeleccionada]);
 
   // Función para procesar la fecha elegida
@@ -130,18 +128,18 @@ export default function PantallaFormulario({
     setGuardando(true);
 
     const datosMascota: Mascota = {
-    id: mascota?.id || 0,
-    nombre: nombre.trim(),
-    especie: especie.trim(),
-    raza: raza.trim() || 'Sin especificar',
-    edad: edad.trim() || 'Desconocida',
-    peso: peso.trim() || 'Desconocido',
-    sexo,
-    foto: foto || 'https://via.placeholder.com/200?text=🐾',
-    estado: estado, 
-    proximaVacuna: proximaVacuna,
-    notas: notas.trim(),
-};
+      id: mascota?.id || 0,
+      nombre: nombre.trim(),
+      especie: especie.trim(),
+      raza: raza.trim() || "Sin especificar",
+      edad: edad.trim() || "Desconocida",
+      peso: peso.trim() || "Desconocido",
+      sexo,
+      foto: foto || "https://via.placeholder.com/200?text=🐾",
+      estado: estado,
+      proximaVacuna: proximaVacuna,
+      notas: notas.trim(),
+    };
 
     if (esEdicion && mascota) {
       actualizarMascota(mascota.id, datosMascota)
@@ -307,7 +305,7 @@ export default function PantallaFormulario({
                   estado === "Saludable" && styles.textoOpcionSexoActiva,
                 ]}
               >
-                ✅ Saludable
+                Saludable
               </Text>
             </Pressable>
             <Pressable
@@ -324,7 +322,7 @@ export default function PantallaFormulario({
                     styles.textoOpcionSexoActiva,
                 ]}
               >
-                ⚠️ Atención
+                Atención
               </Text>
             </Pressable>
           </View>

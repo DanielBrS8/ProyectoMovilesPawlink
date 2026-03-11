@@ -1,38 +1,55 @@
-export type Mascota={
+// === USUARIOS ===
+export type Usuario = {
+  id: number;
+  nombre: string;
+  email: string;
+  password: string;
+  foto: string;
+  telefono: string;
+  direccion: string;
+};
 
-    id:number
-    nombre:string
-    especie:string
-    raza:string
-    edad:string
-    peso:string
-    sexo:string
-    foto:string
-    estado:string
-    proximaVacuna:string
-    notas:string
+// === MASCOTAS ===
+export type Mascota = {
+  id: number;
+  nombre: string;
+  especie: string;
+  raza: string;
+  edad: string;
+  peso: string;
+  sexo: string;
+  foto: string;
+  estado: string;
+  proximaVacuna: string;
+  notas: string;
+};
 
-}
+export type Mascotas = Array<Mascota>;
 
-export type Mascotas= Array<Mascota>
+// === ADOPCION TEMPORAL ===
+export type AdopcionTemporal = {
+  id: number;
+  usuarioId: number;
+  mascotaId: number;
+  fechaInicio: string;
+  fechaFin: string;
+  estado: string;
+  notas: string;
+};
 
-export type Coordenada={
+// === PASEOS ===
+export type Coordenada = {
+  latitude: number;
+  longitude: number;
+};
 
-    latitude:number
-    longitude:number
+export type Paseo = {
+  id: number;
+  mascotaId: number;
+  fecha: string;
+  duracion: string;
+  distancia: number;
+  ruta: Array<Coordenada>;
+};
 
-}
-
-export type Paseo={
-
-    id:number
-    mascotaId:number
-    fecha:string
-    duracion:string
-    distancia:number
-    ruta:Array<Coordenada>
-
-}
-
-export type Paseos= Array<Paseo>
-
+export type Paseos = Array<Paseo>;
