@@ -10,6 +10,7 @@ type CardMascotaProps = {
   onPress: (mascota: Mascota) => void;
   onAdoptar?: (mascota: Mascota) => void;
   enAdopcion?: boolean;
+  adoptadaHasta?: string;
 };
 
 export default function CardMascota({
@@ -18,6 +19,7 @@ export default function CardMascota({
   onPress,
   onAdoptar,
   enAdopcion = false,
+  adoptadaHasta,
 }: CardMascotaProps) {
   const esSaludable = mascota.estado === "Saludable";
   const iconoEspecie = mascota.especie.toLowerCase() === "gato" ? "cat" : "dog";
@@ -45,6 +47,14 @@ export default function CardMascota({
             />
             <Text style={estilos.badgeTexto}>{mascota.estado}</Text>
           </View>
+
+          {/* Badge adoptada */}
+          {adoptadaHasta && (
+            <View style={estilos.badgeAdoptada}>
+              <MaterialCommunityIcons name="home-heart" size={13} color="white" />
+              <Text style={estilos.badgeTexto}>Adoptada · hasta {adoptadaHasta}</Text>
+            </View>
+          )}
 
           <Card.Title
             title={mascota.nombre}
@@ -143,6 +153,18 @@ const estilos = StyleSheet.create({
   },
   badgeNaranja: {
     backgroundColor: "rgba(246, 173, 85, 0.9)",
+  },
+  badgeAdoptada: {
+    position: "absolute",
+    bottom: 12,
+    left: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 20,
+    gap: 4,
+    backgroundColor: "rgba(125, 211, 192, 0.92)",
   },
   badgeTexto: {
     color: "white",

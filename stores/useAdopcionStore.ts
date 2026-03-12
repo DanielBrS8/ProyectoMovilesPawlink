@@ -1,15 +1,22 @@
 import { create } from 'zustand';
 import { Mascota } from '../model/Tipos';
 
+export type MascotaEnCarrito = {
+  mascota: Mascota;
+  fechaInicio: string;
+  fechaFin: string;
+};
+
 export type MascotaEnProceso = {
   mascota: Mascota;
+  fechaInicio: string;
   fechaFin: string;
 };
 
 type AdopcionState = {
-  mascotasEnAdopcion: Mascota[];
+  mascotasEnAdopcion: MascotaEnCarrito[];
   mascotasEnProceso: MascotaEnProceso[];
-  añadir: (mascota: Mascota) => void;
+  añadir: (mascota: Mascota, fechaInicio: string, fechaFin: string) => void;
   quitar: (id: number) => void;
   vaciar: () => void;
   estaEnAdopcion: (id: number) => boolean;
@@ -21,36 +28,32 @@ const useAdopcionStore = create<AdopcionState>((set, get) => ({
   mascotasEnAdopcion: [],
   mascotasEnProceso: [],
 
-  añadir: (mascota: Mascota) => {
-    const existe = get().mascotasEnAdopcion.some((m) => m.id === mascota.id);
+  añadir: (mascota: Mascota, fechaInicio: string, fechaFin: string) => {
+    const existe = get().mascotasEnAdopcion.some((m) => m.mascota.id === mascota.id);
     if (!existe) {
       set((state) => ({
-        mascotasEnAdopcion: [...state.mascotasEnAdopcion, mascota],
+        mascotasEnAdopcion: [...state.mascotasEnAdopcion, { mascota, fechaInicio, fechaFin }],
       }));
     }
   },
 
   quitar: (id: number) => {
     set((state) => ({
-      mascotasEnAdopcion: state.mascotasEnAdopcion.filter((m) => m.id !== id),
+      mascotasEnAdopcion: state.mascotasEnAdopcion.filter((m) => m.mascota.id !== id),
     }));
   },
 
   vaciar: () => set({ mascotasEnAdopcion: [] }),
 
   estaEnAdopcion: (id: number) => {
-    return get().mascotasEnAdopcion.some((m) => m.id === id);
+    return get().mascotasEnAdopcion.some((m) => m.mascota.id === id);
   },
 
   enviarSolicitud: () => {
-    const hoy = new Date();
-    const finDate = new Date(hoy);
-    finDate.setDate(finDate.getDate() + 30);
-    const fechaFin = `${String(finDate.getDate()).padStart(2, '0')}/${String(finDate.getMonth() + 1).padStart(2, '0')}/${finDate.getFullYear()}`;
-
     const nuevosEnProceso: MascotaEnProceso[] = get().mascotasEnAdopcion.map((m) => ({
-      mascota: m,
-      fechaFin,
+      mascota: m.mascota,
+      fechaInicio: m.fechaInicio,
+      fechaFin: m.fechaFin,
     }));
 
     set((state) => ({
