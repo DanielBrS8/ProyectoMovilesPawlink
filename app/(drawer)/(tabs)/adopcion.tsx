@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { View, Text, StyleSheet, FlatList, Pressable, Alert } from "react-native";
-import { Card, Button, Avatar } from "react-native-paper";
+import { View, Text, StyleSheet, FlatList, Pressable, ScrollView, Alert } from "react-native";
+import { Card, Button, Avatar, Chip } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { useFocusEffect, DrawerActions, useNavigation } from "@react-navigation/native";
 import * as Animatable from "react-native-animatable";
@@ -12,7 +12,16 @@ import { Mascota } from "../../../model/Tipos";
 export default function Adopcion() {
   const router = useRouter();
   const navigation = useNavigation();
-  const { mascotasEnAdopcion, añadir, quitar, estaEnAdopcion, vaciar } = useAdopcionStore();
+  const {
+    mascotasEnAdopcion,
+    mascotasEnProceso,
+    añadir,
+    quitar,
+    estaEnAdopcion,
+    vaciar,
+    enviarSolicitud,
+    estaEnProceso,
+  } = useAdopcionStore();
   const [disponibles, setDisponibles] = useState<Mascota[]>([]);
   const [vista, setVista] = useState<"disponibles" | "carrito">("disponibles");
 
@@ -30,8 +39,17 @@ export default function Adopcion() {
     }
   }
 
+  function handleEnviarSolicitud() {
+    enviarSolicitud();
+    Alert.alert(
+      "Solicitud enviada ✓",
+      "Tu solicitud de adopción temporal ha sido registrada. Te contactaremos pronto."
+    );
+  }
+
   function renderDisponible({ item, index }: { item: Mascota; index: number }) {
     const enCarrito = estaEnAdopcion(item.id);
+    const enProceso = estaEnProceso(item.id);
     return (
       <Animatable.View animation="fadeInUp" delay={index * 80}>
         <Card style={estilos.tarjeta} mode="elevated" elevation={2}>
@@ -52,45 +70,35 @@ export default function Adopcion() {
             <Button mode="text" textColor="#7DD3C0" icon="eye" onPress={() => router.push(`/mascota/${item.id}`)}>
               Ver
             </Button>
-            <Button
-              mode={enCarrito ? "contained" : "outlined"}
-              buttonColor={enCarrito ? "#FC8181" : undefined}
-              textColor={enCarrito ? "white" : "#FFB366"}
-              icon={enCarrito ? "heart" : "heart-outline"}
-              style={enCarrito ? {} : { borderColor: "#FFB366" }}
-              onPress={() => toggleAdopcion(item)}
-            >
-              {enCarrito ? "Añadido" : "Adoptar"}
-            </Button>
+            {enProceso ? (
+              <Chip
+                icon="clock-check-outline"
+                style={estilos.chipProceso}
+                textStyle={estilos.chipProcesoTexto}
+                compact
+              >
+                En proceso
+              </Chip>
+            ) : (
+              <Button
+                mode={enCarrito ? "contained" : "outlined"}
+                buttonColor={enCarrito ? "#FC8181" : undefined}
+                textColor={enCarrito ? "white" : "#FFB366"}
+                icon={enCarrito ? "heart" : "heart-outline"}
+                style={enCarrito ? {} : { borderColor: "#FFB366" }}
+                onPress={() => toggleAdopcion(item)}
+              >
+                {enCarrito ? "Añadido" : "Adoptar"}
+              </Button>
+            )}
           </Card.Actions>
         </Card>
       </Animatable.View>
     );
   }
 
-  function renderCarrito({ item, index }: { item: Mascota; index: number }) {
-    return (
-      <Animatable.View animation="fadeInUp" delay={index * 80}>
-        <Card style={estilos.tarjeta} mode="elevated" elevation={2}>
-          <Card.Title
-            title={item.nombre}
-            subtitle={`${item.raza} · ${item.especie}`}
-            titleStyle={estilos.nombre}
-            subtitleStyle={estilos.subtitulo}
-            left={() => <Avatar.Image size={50} source={{ uri: item.foto }} style={{ backgroundColor: "#B8E2F2" }} />}
-          />
-          <Card.Actions>
-            <Button mode="text" textColor="#7DD3C0" icon="eye" onPress={() => router.push(`/mascota/${item.id}`)}>
-              Ver
-            </Button>
-            <Button mode="text" textColor="#FC8181" icon="heart-remove" onPress={() => quitar(item.id)}>
-              Quitar
-            </Button>
-          </Card.Actions>
-        </Card>
-      </Animatable.View>
-    );
-  }
+  const hayCarrito = mascotasEnAdopcion.length > 0;
+  const hayEnProceso = mascotasEnProceso.length > 0;
 
   return (
     <View style={estilos.contenedor}>
@@ -108,7 +116,7 @@ export default function Adopcion() {
             <Text style={estilos.cabeceraSubtitulo}>
               {vista === "disponibles"
                 ? `${disponibles.length} mascotas disponibles`
-                : `${mascotasEnAdopcion.length} en tu lista`}
+                : `${mascotasEnAdopcion.length} en lista · ${mascotasEnProceso.length} en proceso`}
             </Text>
           </View>
         </View>
@@ -128,7 +136,7 @@ export default function Adopcion() {
             onPress={() => setVista("carrito")}
           >
             <Text style={[estilos.vistaBtnTexto, vista === "carrito" && estilos.vistaBtnTextoActivo]}>
-              Mi lista ({mascotasEnAdopcion.length})
+              Mi lista ({mascotasEnAdopcion.length + mascotasEnProceso.length})
             </Text>
           </Pressable>
         </View>
@@ -149,42 +157,8 @@ export default function Adopcion() {
             </View>
           }
         />
-      ) : mascotasEnAdopcion.length > 0 ? (
-        <>
-          <FlatList
-            data={mascotasEnAdopcion}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={renderCarrito}
-            contentContainerStyle={estilos.lista}
-            showsVerticalScrollIndicator={false}
-          />
-          <View style={estilos.footerBotones}>
-            <Button
-              mode="contained"
-              icon="send"
-              buttonColor="#7DD3C0"
-              textColor="white"
-              style={estilos.botonFooter}
-              contentStyle={{ paddingVertical: 6 }}
-              labelStyle={{ fontSize: 15, fontWeight: "700" }}
-              onPress={() =>
-                Alert.alert("Solicitud enviada", "Tu solicitud de adopción temporal ha sido registrada.")
-              }
-            >
-              Enviar Solicitud
-            </Button>
-            <Button
-              mode="outlined"
-              icon="delete-sweep"
-              textColor="#FC8181"
-              style={[estilos.botonFooter, { borderColor: "#FC8181" }]}
-              onPress={vaciar}
-            >
-              Vaciar lista
-            </Button>
-          </View>
-        </>
-      ) : (
+      ) : !hayCarrito && !hayEnProceso ? (
+        /* Lista vacía */
         <View style={estilos.vacio}>
           <Animatable.Text animation="bounceIn" style={{ fontSize: 72, marginBottom: 16 }}>
             💛
@@ -204,6 +178,99 @@ export default function Adopcion() {
             Ver Disponibles
           </Button>
         </View>
+      ) : (
+        /* Secciones carrito + en proceso */
+        <ScrollView contentContainerStyle={estilos.lista} showsVerticalScrollIndicator={false}>
+
+          {/* Sección: solicitudes en proceso */}
+          {hayEnProceso && (
+            <>
+              <View style={estilos.seccionHeader}>
+                <MaterialCommunityIcons name="clock-check-outline" size={18} color="#7DD3C0" />
+                <Text style={estilos.seccionTitulo}>Solicitudes enviadas</Text>
+              </View>
+              {mascotasEnProceso.map((mp, index) => (
+                <Animatable.View key={mp.mascota.id} animation="fadeInUp" delay={index * 80}>
+                  <Card style={[estilos.tarjeta, estilos.tarjetaProceso]} mode="elevated" elevation={1}>
+                    <Card.Title
+                      title={mp.mascota.nombre}
+                      subtitle={`${mp.mascota.raza} · ${mp.mascota.especie}`}
+                      titleStyle={estilos.nombre}
+                      subtitleStyle={estilos.subtitulo}
+                      left={() => <Avatar.Image size={50} source={{ uri: mp.mascota.foto }} style={{ backgroundColor: "#B8E2F2" }} />}
+                      right={() => (
+                        <View style={estilos.badgeProcesoCont}>
+                          <View style={estilos.badgeProcesoInner}>
+                            <MaterialCommunityIcons name="clock-check-outline" size={12} color="#7DD3C0" />
+                            <Text style={estilos.badgeProcesoTexto}>En proceso</Text>
+                          </View>
+                          <Text style={estilos.fechaFin}>Hasta {mp.fechaFin}</Text>
+                        </View>
+                      )}
+                    />
+                  </Card>
+                </Animatable.View>
+              ))}
+            </>
+          )}
+
+          {/* Sección: pendiente de enviar */}
+          {hayCarrito && (
+            <>
+              <View style={estilos.seccionHeader}>
+                <MaterialCommunityIcons name="heart-outline" size={18} color="#FFB366" />
+                <Text style={[estilos.seccionTitulo, { color: "#FFB366" }]}>Pendiente de enviar</Text>
+              </View>
+              {mascotasEnAdopcion.map((item, index) => (
+                <Animatable.View key={item.id} animation="fadeInUp" delay={index * 80}>
+                  <Card style={estilos.tarjeta} mode="elevated" elevation={2}>
+                    <Card.Title
+                      title={item.nombre}
+                      subtitle={`${item.raza} · ${item.especie}`}
+                      titleStyle={estilos.nombre}
+                      subtitleStyle={estilos.subtitulo}
+                      left={() => <Avatar.Image size={50} source={{ uri: item.foto }} style={{ backgroundColor: "#B8E2F2" }} />}
+                    />
+                    <Card.Actions>
+                      <Button mode="text" textColor="#7DD3C0" icon="eye" onPress={() => router.push(`/mascota/${item.id}`)}>
+                        Ver
+                      </Button>
+                      <Button mode="text" textColor="#FC8181" icon="heart-remove" onPress={() => quitar(item.id)}>
+                        Quitar
+                      </Button>
+                    </Card.Actions>
+                  </Card>
+                </Animatable.View>
+              ))}
+
+              <View style={estilos.footerBotonesInline}>
+                <Button
+                  mode="contained"
+                  icon="send"
+                  buttonColor="#7DD3C0"
+                  textColor="white"
+                  style={estilos.botonFooter}
+                  contentStyle={{ paddingVertical: 6 }}
+                  labelStyle={{ fontSize: 15, fontWeight: "700" }}
+                  onPress={handleEnviarSolicitud}
+                >
+                  Enviar Solicitud
+                </Button>
+                <Button
+                  mode="outlined"
+                  icon="delete-sweep"
+                  textColor="#FC8181"
+                  style={[estilos.botonFooter, { borderColor: "#FC8181" }]}
+                  onPress={vaciar}
+                >
+                  Vaciar lista
+                </Button>
+              </View>
+            </>
+          )}
+
+          <View style={{ height: 40 }} />
+        </ScrollView>
       )}
     </View>
   );
@@ -232,8 +299,9 @@ const estilos = StyleSheet.create({
   vistaBtnActivo: { backgroundColor: "white" },
   vistaBtnTexto: { fontSize: 14, fontWeight: "600", color: "rgba(255,255,255,0.8)" },
   vistaBtnTextoActivo: { color: "#FFB366" },
-  lista: { padding: 16, paddingBottom: 120 },
+  lista: { padding: 16, paddingBottom: 40 },
   tarjeta: { marginBottom: 16, borderRadius: 18, backgroundColor: "white", overflow: "hidden" },
+  tarjetaProceso: { borderLeftWidth: 4, borderLeftColor: "#7DD3C0" },
   tarjetaFoto: { height: 160, borderRadius: 0 },
   badgeEstado: {
     position: "absolute", top: 12, right: 12,
@@ -245,10 +313,21 @@ const estilos = StyleSheet.create({
   nombre: { fontSize: 17, fontWeight: "700", color: "#2D3748" },
   subtitulo: { fontSize: 13, color: "#718096" },
   notas: { fontSize: 13, color: "#718096", fontStyle: "italic", lineHeight: 18 },
-  footerBotones: {
-    position: "absolute", bottom: 0, left: 0, right: 0, padding: 16,
-    backgroundColor: "white", borderTopWidth: 1, borderTopColor: "#E2E8F0", gap: 8,
+  chipProceso: { backgroundColor: "#E6FAF7", marginRight: 8 },
+  chipProcesoTexto: { color: "#7DD3C0", fontSize: 12, fontWeight: "600" },
+  seccionHeader: {
+    flexDirection: "row", alignItems: "center", gap: 6,
+    marginBottom: 12, marginTop: 4,
   },
+  seccionTitulo: { fontSize: 15, fontWeight: "700", color: "#7DD3C0" },
+  badgeProcesoCont: { alignItems: "flex-end", marginRight: 12, gap: 2 },
+  badgeProcesoInner: {
+    flexDirection: "row", alignItems: "center", gap: 4,
+    backgroundColor: "#E6FAF7", paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12,
+  },
+  badgeProcesoTexto: { color: "#7DD3C0", fontSize: 11, fontWeight: "600" },
+  fechaFin: { fontSize: 11, color: "#718096" },
+  footerBotonesInline: { marginTop: 8, gap: 8 },
   botonFooter: { borderRadius: 14 },
   vacio: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 40, marginTop: 60 },
   vacioTitulo: { fontSize: 22, fontWeight: "700", color: "#2D3748", marginBottom: 8 },

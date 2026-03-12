@@ -161,7 +161,7 @@ export async function actualizarUsuario(id: number, datos: Partial<Usuario>): Pr
 export async function consultarMascotasAdopcion(): Promise<Mascotas> {
   if (USE_FAKE_API) {
     await delay();
-    return [...mockMascotasAdopcion];
+    return mockMascotasAdopcion.map((m) => ({ ...m, esMia: false }));
   }
   const axios = (await import('axios')).default;
   return (await axios.get(`${URL_API}/mascotas?adopcion=true`)).data;
@@ -170,7 +170,7 @@ export async function consultarMascotasAdopcion(): Promise<Mascotas> {
 export async function consultarMascotas(): Promise<Mascotas> {
   if (USE_FAKE_API) {
     await delay();
-    return [...mockMascotas];
+    return mockMascotas.map((m) => ({ ...m, esMia: true }));
   }
   const axios = (await import('axios')).default;
   return (await axios.get(`${URL_API}/mascotas`)).data;
@@ -179,9 +179,11 @@ export async function consultarMascotas(): Promise<Mascotas> {
 export async function consultarMascota(id: number): Promise<Mascota> {
   if (USE_FAKE_API) {
     await delay();
-    const m = mockMascotas.find((m) => m.id === id);
-    if (!m) throw new Error('Mascota no encontrada');
-    return { ...m };
+    const propia = mockMascotas.find((m) => m.id === id);
+    if (propia) return { ...propia, esMia: true };
+    const adopcion = mockMascotasAdopcion.find((m) => m.id === id);
+    if (adopcion) return { ...adopcion, esMia: false };
+    throw new Error('Mascota no encontrada');
   }
   const axios = (await import('axios')).default;
   return (await axios.get(`${URL_API}/mascotas/${id}`)).data;
@@ -224,12 +226,14 @@ export async function buscarMascotas(texto: string): Promise<Mascotas> {
   if (USE_FAKE_API) {
     await delay(200);
     const t = texto.toLowerCase();
-    return mockMascotas.filter(
-      (m) =>
-        m.nombre.toLowerCase().includes(t) ||
-        m.raza.toLowerCase().includes(t) ||
-        m.especie.toLowerCase().includes(t)
-    );
+    return mockMascotas
+      .filter(
+        (m) =>
+          m.nombre.toLowerCase().includes(t) ||
+          m.raza.toLowerCase().includes(t) ||
+          m.especie.toLowerCase().includes(t)
+      )
+      .map((m) => ({ ...m, esMia: true }));
   }
   const axios = (await import('axios')).default;
   return (await axios.get(`${URL_API}/mascotas?q=${texto}`)).data;

@@ -6,7 +6,6 @@ import { useFocusEffect, DrawerActions, useNavigation } from "@react-navigation/
 import * as Animatable from "react-native-animatable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import useMascotaStore from "../../../stores/useMascotaStore";
-import useAdopcionStore from "../../../stores/useAdopcionStore";
 import CardMascota from "../../../components/CardMascota";
 import { Mascota } from "../../../model/Tipos";
 
@@ -23,8 +22,6 @@ export default function Mascotas() {
     cargarMascotas,
     buscar,
   } = useMascotaStore();
-
-  const { añadir, quitar, estaEnAdopcion } = useAdopcionStore();
 
   useFocusEffect(
     useCallback(() => {
@@ -43,14 +40,6 @@ export default function Mascotas() {
 
   function handlePressMascota(mascota: Mascota) {
     router.push(`/mascota/${mascota.id}`);
-  }
-
-  function handleAdoptar(mascota: Mascota) {
-    if (estaEnAdopcion(mascota.id)) {
-      quitar(mascota.id);
-    } else {
-      añadir(mascota);
-    }
   }
 
   return (
@@ -106,8 +95,6 @@ export default function Mascotas() {
               mascota={item}
               indice={index}
               onPress={handlePressMascota}
-              onAdoptar={handleAdoptar}
-              enAdopcion={estaEnAdopcion(item.id)}
             />
           )}
           contentContainerStyle={estilos.lista}

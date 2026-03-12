@@ -5,7 +5,11 @@
       "Bash(npm install:*)",
       "Bash(npx tsc:*)",
       "Bash(npx expo export:*)",
-      "Bash(npx expo start:*)"
+      "Bash(npx expo start:*)",
+      "Read(//home/practicas/**)",
+      "Read(//opt/**)",
+      "Bash(ls -la \"/home/practicas/Documentos/practicas/ProyectoMovilesPawlink/app/\\(drawer\\)/\")",
+      "Bash(ls -la \"/home/practicas/Documentos/practicas/ProyectoMovilesPawlink/app/\\(drawer\\)/\\(tabs\\)/\")"
     ]
   }
 }

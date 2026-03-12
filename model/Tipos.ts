@@ -22,6 +22,7 @@ export type Mascota = {
   estado: string;
   proximaVacuna: string;
   notas: string;
+  esMia?: boolean; // true = mascota propia, false = mascota de adopción
 };
 
 export type Mascotas = Array<Mascota>;

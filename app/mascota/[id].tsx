@@ -8,14 +8,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Mascota, Paseos } from "../../model/Tipos";
 import { consultarMascota, consultarPaseosMascota } from "../../helpers/ConsultasApi";
 import useMascotaStore from "../../stores/useMascotaStore";
-import useAdopcionStore from "../../stores/useAdopcionStore";
 
 export default function DetalleMascota() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const eliminar = useMascotaStore((state) => state.eliminar);
-  const { añadir, quitar, estaEnAdopcion } = useAdopcionStore();
 
   const [mascota, setMascota] = useState<Mascota | null>(null);
   const [paseos, setPaseos] = useState<Paseos>([]);
@@ -61,15 +59,6 @@ export default function DetalleMascota() {
     );
   }
 
-  function handleAdoptar() {
-    if (!mascota) return;
-    if (estaEnAdopcion(mascota.id)) {
-      quitar(mascota.id);
-    } else {
-      añadir(mascota);
-    }
-  }
-
   if (cargando) {
     return (
       <View style={estilos.cargando}>
@@ -87,7 +76,6 @@ export default function DetalleMascota() {
   }
 
   const esSaludable = mascota.estado === "Saludable";
-  const enAdopcion = estaEnAdopcion(mascota.id);
   const avatarSize = width < 380 ? 100 : 130;
 
   return (
@@ -214,57 +202,48 @@ export default function DetalleMascota() {
 
         {/* Botones de acción */}
         <View style={estilos.botonesSeccion}>
-          <Animatable.View animation="pulse" iterationCount={1} delay={1000}>
-            <Button
-              mode="contained"
-              icon="walk"
-              buttonColor="#7DD3C0"
-              textColor="white"
-              style={estilos.botonAccion}
-              contentStyle={estilos.botonContenido}
-              labelStyle={estilos.botonLabel}
-              onPress={() => router.push(`/paseo/${mascota.id}`)}
-            >
-              Iniciar Paseo
-            </Button>
-          </Animatable.View>
+          {mascota.esMia !== false && (
+            <>
+              <Animatable.View animation="pulse" iterationCount={1} delay={1000}>
+                <Button
+                  mode="contained"
+                  icon="walk"
+                  buttonColor="#7DD3C0"
+                  textColor="white"
+                  style={estilos.botonAccion}
+                  contentStyle={estilos.botonContenido}
+                  labelStyle={estilos.botonLabel}
+                  onPress={() => router.push(`/paseo/${mascota.id}`)}
+                >
+                  Iniciar Paseo
+                </Button>
+              </Animatable.View>
 
-          <Button
-            mode="contained"
-            icon={enAdopcion ? "heart" : "heart-outline"}
-            buttonColor={enAdopcion ? "#FC8181" : "#FFB366"}
-            textColor="white"
-            style={estilos.botonAccion}
-            contentStyle={estilos.botonContenido}
-            labelStyle={estilos.botonLabel}
-            onPress={handleAdoptar}
-          >
-            {enAdopcion ? "Quitar Adopción" : "Solicitar Adopción"}
-          </Button>
+              <Button
+                mode="outlined"
+                icon="pencil"
+                textColor="#7DD3C0"
+                style={[estilos.botonAccion, { borderColor: "#7DD3C0" }]}
+                contentStyle={estilos.botonContenido}
+                labelStyle={estilos.botonLabel}
+                onPress={() => router.push(`/formulario?id=${mascota.id}`)}
+              >
+                Editar Mascota
+              </Button>
 
-          <Button
-            mode="outlined"
-            icon="pencil"
-            textColor="#7DD3C0"
-            style={[estilos.botonAccion, { borderColor: "#7DD3C0" }]}
-            contentStyle={estilos.botonContenido}
-            labelStyle={estilos.botonLabel}
-            onPress={() => router.push(`/formulario?id=${mascota.id}`)}
-          >
-            Editar Mascota
-          </Button>
-
-          <Button
-            mode="outlined"
-            icon="delete"
-            textColor="#FC8181"
-            style={[estilos.botonAccion, { borderColor: "#FC8181" }]}
-            contentStyle={estilos.botonContenido}
-            labelStyle={estilos.botonLabel}
-            onPress={confirmarBorrar}
-          >
-            Eliminar Mascota
-          </Button>
+              <Button
+                mode="outlined"
+                icon="delete"
+                textColor="#FC8181"
+                style={[estilos.botonAccion, { borderColor: "#FC8181" }]}
+                contentStyle={estilos.botonContenido}
+                labelStyle={estilos.botonLabel}
+                onPress={confirmarBorrar}
+              >
+                Eliminar Mascota
+              </Button>
+            </>
+          )}
         </View>
 
         <View style={{ height: 40 }} />
