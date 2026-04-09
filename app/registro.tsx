@@ -5,43 +5,51 @@ import { useRouter } from "expo-router";
 import * as Animatable from "react-native-animatable";
 import useUsuarioStore from "../stores/useUsuarioStore";
 
-export default function Login() {
+export default function Registro() {
   const router = useRouter();
-  const login = useUsuarioStore((state) => state.login);
+  const registro = useUsuarioStore((state) => state.registro);
 
-  const [email, setEmail] = useState("carlos@pawlink.com");
-  const [password, setPassword] = useState("123456");
-  const [errores, setErrores] = useState({ email: "", password: "", general: "" });
+  const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errores, setErrores] = useState({ nombre: "", email: "", password: "", general: "" });
   const [cargando, setCargando] = useState(false);
   const [mostrarPassword, setMostrarPassword] = useState(false);
 
   const formRef = useRef<Animatable.View & View>(null);
+  const nombreRef = useRef<Animatable.View & View>(null);
   const emailRef = useRef<Animatable.View & View>(null);
   const passwordRef = useRef<Animatable.View & View>(null);
 
   function validar(): boolean {
-    const nuevosErrores = { email: "", password: "", general: "" };
+    const nuevosErrores = { nombre: "", email: "", password: "", general: "" };
     let valido = true;
+
+    if (nombre.trim() === "") {
+      nuevosErrores.nombre = "El nombre es obligatorio";
+      valido = false;
+    }
 
     if (email.trim() === "") {
       nuevosErrores.email = "El email es obligatorio";
       valido = false;
     } else if (!email.includes("@")) {
-      nuevosErrores.email = "Introduce un email válido";
+      nuevosErrores.email = "Introduce un email valido";
       valido = false;
     }
 
     if (password.trim() === "") {
-      nuevosErrores.password = "La contraseña es obligatoria";
+      nuevosErrores.password = "La contrasena es obligatoria";
       valido = false;
     } else if (password.length < 4) {
-      nuevosErrores.password = "Mínimo 4 caracteres";
+      nuevosErrores.password = "Minimo 4 caracteres";
       valido = false;
     }
 
     setErrores(nuevosErrores);
 
     if (!valido) {
+      if (nuevosErrores.nombre) nombreRef.current?.shake?.(800);
       if (nuevosErrores.email) emailRef.current?.shake?.(800);
       if (nuevosErrores.password) passwordRef.current?.shake?.(800);
     }
@@ -49,27 +57,27 @@ export default function Login() {
     return valido;
   }
 
-  async function handleLogin() {
+  async function handleRegistro() {
     if (!validar()) return;
 
     setCargando(true);
-    setErrores({ email: "", password: "", general: "" });
+    setErrores({ nombre: "", email: "", password: "", general: "" });
 
     try {
-      const exito = await login(email.trim(), password);
+      const exito = await registro(nombre.trim(), email.trim(), password);
       if (exito) {
         router.replace("/(drawer)/(tabs)");
       } else {
         setErrores((prev) => ({
           ...prev,
-          general: "Email o contraseña incorrectos",
+          general: "No se pudo crear la cuenta. Intentalo de nuevo.",
         }));
         formRef.current?.shake?.(800);
       }
     } catch {
       setErrores((prev) => ({
         ...prev,
-        general: "Error de conexión. Verifica que el servidor esté activo.",
+        general: "Error de conexion. Verifica que el servidor este activo.",
       }));
       formRef.current?.shake?.(800);
     } finally {
@@ -91,7 +99,7 @@ export default function Login() {
         <Animatable.View animation="fadeIn" duration={1000} style={estilos.logoSeccion}>
           <Text style={estilos.logoEmoji}>🐾</Text>
           <Text style={estilos.logoTexto}>PawLink</Text>
-          <Text style={estilos.logoSubtitulo}>Inicia sesión para continuar</Text>
+          <Text style={estilos.logoSubtitulo}>Crea tu cuenta</Text>
         </Animatable.View>
 
         {/* Formulario */}
@@ -108,7 +116,30 @@ export default function Login() {
             </Animatable.View>
           )}
 
-          <Animatable.View ref={emailRef}>
+          <Animatable.View ref={nombreRef}>
+            <TextInput
+              mode="outlined"
+              label="Nombre"
+              placeholder="Tu nombre completo"
+              value={nombre}
+              onChangeText={(t) => {
+                setNombre(t);
+                if (errores.nombre) setErrores((p) => ({ ...p, nombre: "" }));
+              }}
+              autoCapitalize="words"
+              left={<TextInput.Icon icon="account-outline" />}
+              error={errores.nombre !== ""}
+              outlineColor="#E2E8F0"
+              activeOutlineColor="#7DD3C0"
+              outlineStyle={{ borderRadius: 14 }}
+              style={estilos.input}
+            />
+            {errores.nombre !== "" && (
+              <Text style={estilos.errorTexto}>{errores.nombre}</Text>
+            )}
+          </Animatable.View>
+
+          <Animatable.View ref={emailRef} style={{ marginTop: 16 }}>
             <TextInput
               mode="outlined"
               label="Email"
@@ -135,8 +166,8 @@ export default function Login() {
           <Animatable.View ref={passwordRef} style={{ marginTop: 16 }}>
             <TextInput
               mode="outlined"
-              label="Contraseña"
-              placeholder="Tu contraseña"
+              label="Contrasena"
+              placeholder="Tu contrasena"
               value={password}
               onChangeText={(t) => {
                 setPassword(t);
@@ -164,7 +195,7 @@ export default function Login() {
           <Animatable.View animation="fadeInUp" delay={600}>
             <Button
               mode="contained"
-              onPress={handleLogin}
+              onPress={handleRegistro}
               disabled={cargando}
               buttonColor="#7DD3C0"
               textColor="white"
@@ -175,20 +206,20 @@ export default function Login() {
               {cargando ? (
                 <ActivityIndicator color="white" size={20} />
               ) : (
-                "Iniciar Sesión"
+                "Crear Cuenta"
               )}
             </Button>
           </Animatable.View>
 
           <Animatable.View animation="fadeIn" delay={800} style={estilos.enlace}>
             <Text style={estilos.enlaceTexto}>
-              No tienes cuenta?{" "}
+              Ya tienes cuenta?{" "}
             </Text>
             <Text
               style={estilos.enlaceAccion}
-              onPress={() => router.replace("/registro")}
+              onPress={() => router.replace("/login")}
             >
-              Registrate aqui
+              Inicia sesion
             </Text>
           </Animatable.View>
         </Animatable.View>
