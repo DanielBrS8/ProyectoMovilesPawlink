@@ -50,6 +50,7 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="login" />
+          <Stack.Screen name="registro" />
           <Stack.Screen name="(drawer)" />
           <Stack.Screen
             name="formulario"
