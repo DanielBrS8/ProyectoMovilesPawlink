@@ -38,6 +38,22 @@ export type AdopcionTemporal = {
   notas: string;
 };
 
+// === CENTROS VETERINARIOS ===
+export type CentroVeterinario = {
+  idCentro: number;
+  nombre: string;
+  ciudad: string;
+  direccion: string;
+  telefono: string;
+  especialidad: string;
+  foto: string;
+  horario: string;
+  latitud: number;
+  longitud: number;
+};
+
+export type CentrosVeterinarios = Array<CentroVeterinario>;
+
 // === PASEOS ===
 export type Coordenada = {
   latitude: number;

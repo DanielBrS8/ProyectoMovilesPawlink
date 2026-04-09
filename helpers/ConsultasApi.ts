@@ -1,4 +1,4 @@
-import { Mascota, Mascotas, Paseo, Paseos, Usuario, AdopcionTemporal } from '../model/Tipos';
+import { Mascota, Mascotas, Paseo, Paseos, Usuario, AdopcionTemporal, CentroVeterinario, CentrosVeterinarios } from '../model/Tipos';
 
 // ===================================================================
 // FAKE API - Datos simulados en memoria (sin necesidad de servidor)
@@ -107,6 +107,69 @@ let mockMascotasAdopcion: Mascotas = [
     foto: "https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=400",
     estado: "Saludable", proximaVacuna: "25/05/2026",
     notas: "Cachorro muy activo y sociable con otros perros.",
+  },
+];
+
+let mockCentros: CentrosVeterinarios = [
+  {
+    idCentro: 1,
+    nombre: "Clínica Veterinaria Albayzín",
+    ciudad: "Granada",
+    direccion: "Calle Elvira 42, Granada",
+    telefono: "958123456",
+    especialidad: "Medicina General",
+    foto: "https://images.unsplash.com/photo-1585435557343-3b092031a831?w=400",
+    horario: "Lun-Vie 9:00-20:00 | Sáb 10:00-14:00",
+    latitud: 37.1818,
+    longitud: -3.5993,
+  },
+  {
+    idCentro: 2,
+    nombre: "Hospital Veterinario Granada Sur",
+    ciudad: "Granada",
+    direccion: "Av. de Andalucía 120, Granada",
+    telefono: "958654321",
+    especialidad: "Urgencias 24h",
+    foto: "https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=400",
+    horario: "Abierto 24 horas todos los días",
+    latitud: 37.1530,
+    longitud: -3.6068,
+  },
+  {
+    idCentro: 3,
+    nombre: "Centro Veterinario Zaidín",
+    ciudad: "Granada",
+    direccion: "Calle Arabial 15, Granada",
+    telefono: "958789012",
+    especialidad: "Dermatología y Nutrición",
+    foto: "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=400",
+    horario: "Lun-Vie 8:30-21:00 | Sáb 9:00-13:00",
+    latitud: 37.1647,
+    longitud: -3.5940,
+  },
+  {
+    idCentro: 4,
+    nombre: "Veterinaria Fauna",
+    ciudad: "Granada",
+    direccion: "Plaza de Gracia 5, Granada",
+    telefono: "958345678",
+    especialidad: "Animales Exóticos",
+    foto: "https://images.unsplash.com/photo-1559163499-413811fb2344?w=400",
+    horario: "Lun-Vie 10:00-19:00",
+    latitud: 37.1756,
+    longitud: -3.5869,
+  },
+  {
+    idCentro: 5,
+    nombre: "Clínica Veterinaria Campus",
+    ciudad: "Granada",
+    direccion: "Calle Recogidas 8, Granada",
+    telefono: "958901234",
+    especialidad: "Cirugía y Ortopedia",
+    foto: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400",
+    horario: "Lun-Sáb 9:00-21:00",
+    latitud: 37.1697,
+    longitud: -3.6006,
   },
 ];
 
@@ -237,6 +300,17 @@ export async function buscarMascotas(texto: string): Promise<Mascotas> {
   }
   const axios = (await import('axios')).default;
   return (await axios.get(`${URL_API}/mascotas?q=${texto}`)).data;
+}
+
+// ===== CENTROS VETERINARIOS =====
+
+export async function consultarCentros(): Promise<CentrosVeterinarios> {
+  if (USE_FAKE_API) {
+    await delay();
+    return [...mockCentros];
+  }
+  const axios = (await import('axios')).default;
+  return (await axios.get(`${URL_API}/centros`)).data;
 }
 
 // ===== ADOPCIONES =====

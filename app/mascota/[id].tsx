@@ -8,12 +8,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Mascota, Paseos } from "../../model/Tipos";
 import { consultarMascota, consultarPaseosMascota } from "../../helpers/ConsultasApi";
 import useMascotaStore from "../../stores/useMascotaStore";
+import useAdopcionStore from "../../stores/useAdopcionStore";
 
 export default function DetalleMascota() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const eliminar = useMascotaStore((state) => state.eliminar);
+  const { mascotasEnProceso } = useAdopcionStore();
 
   const [mascota, setMascota] = useState<Mascota | null>(null);
   const [paseos, setPaseos] = useState<Paseos>([]);
@@ -26,6 +28,10 @@ export default function DetalleMascota() {
   async function cargarDatos() {
     try {
       const idNum = parseInt(id);
+      if (isNaN(idNum)) {
+        setCargando(false);
+        return;
+      }
       const [datosMascota, datosPaseos] = await Promise.all([
         consultarMascota(idNum),
         consultarPaseosMascota(idNum),
@@ -77,6 +83,7 @@ export default function DetalleMascota() {
 
   const esSaludable = mascota.estado === "Saludable";
   const avatarSize = width < 380 ? 100 : 130;
+  const adopcionActiva = mascotasEnProceso.find((mp) => mp.mascota.id === mascota.id);
 
   return (
     <View style={estilos.contenedor}>
@@ -200,9 +207,30 @@ export default function DetalleMascota() {
           )}
         </Animatable.View>
 
+        {/* Info de adopción si está adoptada */}
+        {adopcionActiva && (
+          <Animatable.View animation="fadeInUp" delay={850}>
+            <Card style={[estilos.tarjeta, { borderLeftWidth: 4, borderLeftColor: "#7DD3C0" }]} mode="elevated" elevation={1}>
+              <Card.Title
+                title="Adopción temporal activa"
+                titleStyle={estilos.seccionTitulo}
+                left={() => (
+                  <Avatar.Icon size={40} icon="home-heart" style={{ backgroundColor: "#E6FAF5" }} color="#7DD3C0" />
+                )}
+              />
+              <Card.Content>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 4 }}>
+                  <Text style={estilos.textoNotas}>Desde: {adopcionActiva.fechaInicio}</Text>
+                  <Text style={estilos.textoNotas}>Hasta: {adopcionActiva.fechaFin}</Text>
+                </View>
+              </Card.Content>
+            </Card>
+          </Animatable.View>
+        )}
+
         {/* Botones de acción */}
         <View style={estilos.botonesSeccion}>
-          {mascota.esMia !== false && (
+          {mascota.esMia === true && (
             <>
               <Animatable.View animation="pulse" iterationCount={1} delay={1000}>
                 <Button
@@ -243,6 +271,23 @@ export default function DetalleMascota() {
                 Eliminar Mascota
               </Button>
             </>
+          )}
+
+          {adopcionActiva && (
+            <Animatable.View animation="pulse" iterationCount={1} delay={1000}>
+              <Button
+                mode="contained"
+                icon="walk"
+                buttonColor="#7DD3C0"
+                textColor="white"
+                style={estilos.botonAccion}
+                contentStyle={estilos.botonContenido}
+                labelStyle={estilos.botonLabel}
+                onPress={() => router.push(`/paseo/${mascota.id}`)}
+              >
+                Iniciar Paseo
+              </Button>
+            </Animatable.View>
           )}
         </View>
 

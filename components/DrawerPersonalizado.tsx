@@ -75,6 +75,11 @@ export default function DrawerPersonalizado(props: any) {
           onPress={() => router.push("/(drawer)/(tabs)/adopcion")}
         />
         <ItemDrawer
+          icono="hospital-building"
+          etiqueta="Centros Veterinarios"
+          onPress={() => router.push("/(drawer)/(tabs)/centros")}
+        />
+        <ItemDrawer
           icono="account"
           etiqueta="Mi Perfil"
           onPress={() => router.push("/(drawer)/(tabs)/perfil")}

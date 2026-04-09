@@ -58,6 +58,15 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="centros"
+        options={{
+          title: "Centros",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="hospital-building" size={iconSize} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="perfil"
         options={{
           title: "Perfil",
